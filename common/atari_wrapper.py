@@ -101,7 +101,8 @@ class FireResetEnv(gym.Wrapper):
 # 遊戲畫面前處理
 def _process_frame84(frame):
     img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
-    # 底下的係數不知道是從哪邊得出的
+    # RGB轉灰階
+    # https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
     img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
     # 轉為Image物件，使用BILINEAR插值
     img = Image.fromarray(img)
@@ -145,4 +146,44 @@ def wrap_dqn(env):
         env = FireResetEnv(env)
     env = ProcessFrame84(env)
     env = ClippedRewardsWrapper(env)
+    return env
+
+
+
+
+# 針對mario去修改size
+def _process_frame_mario(frame):
+    img = np.reshape(frame, [224, 256, 3]).astype(np.float32)
+    # RGB轉灰階
+    # https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
+    img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
+    # 轉為Image物件，使用BILINEAR插值
+    img = Image.fromarray(img)
+    resized_screen = img.resize((84, 110), Image.BILINEAR)
+    resized_screen = np.array(resized_screen)
+    x_t = resized_screen[18:102, :]
+    x_t = np.reshape(x_t, [84, 84, 1])
+    return x_t.astype(np.uint8)
+
+
+
+# 重新實作經過前處理的step與reset
+class ProcessFrameMario(gym.Wrapper):
+    def __init__(self, env=None):
+        super(ProcessFrameMario, self).__init__(env)
+        self.observation_space = spaces.Box(low=0, high=255, shape=(84, 84, 1))
+
+    def _step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        return _process_frame_mario(obs), reward, done, info
+
+    def _reset(self):
+        return _process_frame_mario(self.env.reset())
+
+
+
+def wrap_mario(env):
+    assert 'SuperMarioBros' in env.spec.id
+    env = MaxAndSkipEnv(env, skip=4)
+    env = ProcessFrameMario(env)
     return env
