@@ -12,18 +12,20 @@ from deepq.learn import learning
 from deepq.model import DQN
 
 from common.atari_wrapper import wrap_dqn
-from common.schedule import PiecewiseSchedule
+from common.schedule import LinearSchedule
 
 
 SEED = 0
 BATCH_SIZE = 32
 GAMMA = 0.99
-REPLAY_BUFFER_SIZE=1000000
-LEARNING_STARTS=50000
-LEARNING_FREQ=4
-FRAME_HISTORY_LEN=4
-TARGET_UPDATE_FREQ=10000
-
+REPLAY_BUFFER_SIZE = 1000000
+LEARNING_STARTS = 50000
+LEARNING_FREQ = 4
+FRAME_HISTORY_LEN = 4
+TARGET_UPDATE_FREQ = 10000
+LEARNING_RATE = 0.00025
+ALPHA = 0.95
+EPS = 0.01
 
 
 
@@ -33,30 +35,18 @@ def main(env):
     num_iterations = float(40000000) / 4.0
     
     
-    # define learning rate and exploration schedules
-    lr_multiplier = 1.0
-    
-    lr_schedule = PiecewiseSchedule(endpoints=[
-        (0, 1e-4 * lr_multiplier),
-        (num_iterations / 10, 1e-4 * lr_multiplier),
-        (num_iterations / 2 , 5e-5 * lr_multiplier),
-    ], outside_value=5e-5 * lr_multiplier)
-    
-    
-    exploration_schedule = PiecewiseSchedule([
-        (0, 1.0),
-        (1e6, 0.1),
-        (num_iterations / 2, 0.01),
-    ], outside_value=0.01)
+    # define exploration schedule
+    exploration_schedule = LinearSchedule(1000000, 0.1)
     
     
     # optimizer
     OptimizerSpec = namedtuple("OptimizerSpec", ["constructor", "kwargs"])
     
     optimizer = OptimizerSpec(
-        constructor=optim.Adam,
-        kwargs=dict(eps=1e-4),
+        constructor=optim.RMSprop,
+        kwargs=dict(lr=LEARNING_RATE, alpha=ALPHA, eps=EPS),
     )
+    
     
     learning(
         env=env,
