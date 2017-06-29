@@ -28,7 +28,6 @@ ALPHA = 0.95
 EPS = 0.01
 
 
-
 def main(env):
     ### 首先要為隨時間改變的參數設定schedule
     # This is a just rough estimate
@@ -62,10 +61,10 @@ def main(env):
         target_update_freq=TARGET_UPDATE_FREQ
     )
 
+
 if __name__ == '__main__':
     
     env = gym.make("PongNoFrameskip-v3")
-    
     
     # set global seeds
     env.seed(SEED)
@@ -73,13 +72,11 @@ if __name__ == '__main__':
     np.random.seed(SEED)
     random.seed(SEED)
     
-    
     # monitor & wrap the game
     env = wrap_dqn(env)
     
     expt_dir = 'video/gym-reslults'
     env = wrappers.Monitor(env, expt_dir, force=True, video_callable=lambda count: count % 50 == 0)
 
-    
     # main
     main(env)
