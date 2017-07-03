@@ -54,7 +54,7 @@ python train_pong.py
 
 * Atari-Pong
 
-使用1張GPU(Nvidia Tesla K80)加4顆cpu在GCP上跑8個小時，能夠穩定大幅贏電腦。 
+使用1張GPU(Nvidia Tesla K80)加4顆cpu在GCP上跑8個小時，能夠穩定大幅贏電腦。  
 訓練的影像預設位置在/video/gym-reslults/。
 
 ![](img/pong-dqn-8hr.gif)
