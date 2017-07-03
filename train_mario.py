@@ -79,7 +79,7 @@ if __name__ == '__main__':
     env = wrap_mario(env)
     
     expt_dir = 'video/mario'
-    env = wrappers.Monitor(env, expt_dir, force=True, video_callable=lambda count: count % 50 == 0)
+    env = wrappers.Monitor(env, expt_dir, force=True, video_callable=lambda count: count % 10 == 0)
 
     # main
     main(env)
