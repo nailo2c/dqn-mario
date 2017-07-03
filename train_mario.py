@@ -20,10 +20,10 @@ SEED = 0
 BATCH_SIZE = 32
 GAMMA = 0.99
 REPLAY_BUFFER_SIZE = 1000000
-LEARNING_STARTS = 50000
+LEARNING_STARTS = 10000
 LEARNING_FREQ = 4
 FRAME_HISTORY_LEN = 4
-TARGET_UPDATE_FREQ = 10000
+TARGET_UPDATE_FREQ = 3000
 LEARNING_RATE = 0.00025
 ALPHA = 0.95
 EPS = 0.01
@@ -81,6 +81,5 @@ if __name__ == '__main__':
     expt_dir = 'video/mario'
     env = wrappers.Monitor(env, expt_dir, force=True, video_callable=lambda count: count % 50 == 0)
 
-    print('make env complete.')
     # main
     main(env)
