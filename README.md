@@ -46,7 +46,7 @@ python train_pong.py
 # Result
 
 * Super-Mario-Bros  
-使用8顆cpu在GCP上跑16個小時，RAM開25G非常足夠，但很難收斂，無法穩定過關。
+使用8顆cpu在GCP上跑16個小時，RAM開24G非常足夠，但很難收斂，無法穩定過關。
 
 ![](img/mario-dqn-16hr.gif)
 
