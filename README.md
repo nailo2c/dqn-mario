@@ -1,6 +1,6 @@
 # DQN
 
-使用PyTorch實作DQN演算法，並訓練super-mario-bros以及atari-pong。
+使用PyTorch實作DQN演算法，並訓練super-mario-bros以及atari-pong，整體架構參考openai/baselines。
   
 # Dependencies
 
