@@ -217,12 +217,15 @@ def mario_learning(
         else:
             return torch.IntTensor([[random.randrange(num_actions)]])
         
-        
     # to one hot
     def to_onehot(action, num_actions):
         action = action % num_actions
-        action_onehot = np.zeros(num_actions, dtype=int)
-        action_onehot[action] = 1
+        if action == 0:
+            # Move right while jumping
+            action_onehot = np.array([0, 0, 0, 1, 1, 0])
+        else:
+            action_onehot = np.zeros(num_actions, dtype=int)
+            action_onehot[action] = 1
         return action_onehot
 
 
