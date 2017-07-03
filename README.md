@@ -45,13 +45,17 @@ python train_pong.py
 
 # Result
 
-* Super-Mario-Bros  
-使用8顆cpu在GCP上跑16個小時，RAM開24G非常足夠，但很難收斂，無法穩定過關。
+* Super-Mario-Bros
+
+使用8顆cpu在GCP上跑16個小時，RAM開24G非常足夠，但很難收斂，無法穩定過關。  
+訓練的影像預設位置在/video/mario/。
 
 ![](img/mario-dqn-16hr.gif)
 
-* Atari-Pong  
-使用4顆cpu在GCP上跑8個小時，能夠穩定大幅贏電腦。
+* Atari-Pong
+
+使用4顆cpu在GCP上跑8個小時，能夠穩定大幅贏電腦。  
+訓練的影像預設位置在/video/gym-reslults/。
 
 ![](img/pong-dqn-8hr.gif)
 
