@@ -10,6 +10,7 @@ import gym
 import torch
 import torch.nn as nn
 import torch.autograd as autograd
+import torch.nn.functional as F
 
 from .replay_buffer import ReplayBuffer
 
@@ -60,7 +61,7 @@ def learning(
         eps_threshold = exploration.value(t)
         if sample > eps_threshold:
             obs = torch.from_numpy(obs).type(dtype).unsqueeze(0) / 255.0
-            return model(Variable(obs, volatile=True)).data.max(1)[1].cpu()
+            return model(Variable(obs, volatile=True)).data.max(1)[1].view(1,1)
         else:
             return torch.IntTensor([[random.randrange(num_actions)]])
         
@@ -130,22 +131,28 @@ def learning(
                 rew_batch = rew_batch.cuda()
                 
             # 從抽出的batch observation中得出現在的Q值
-            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
+            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1)).squeeze()
             # 用next_obs_batch計算下一個Q值，detach代表將target network從graph中分離，不去計算它的gradient
             next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
             next_Q_values = not_done_mask * next_max_q
             # TD value
             target_Q_values = rew_batch + (gamma * next_Q_values)
             # Compute Bellman error
-            bellman_error = target_Q_values - current_Q_values
+            # bellman_error = target_Q_values - current_Q_values
             # clip the bellman error between [-1, 1]
-            clipped_bellman_error = bellman_error.clamp(-1, 1)
+            # clipped_bellman_error = bellman_error.clamp(-1, 1)
             # 要 * -1 才是正確的gradient，why?
-            d_error = clipped_bellman_error * -1.0
-            
+            # d_error = clipped_bellman_error * -1.0
+           
+            # print(d_error)
+            loss = F.smooth_l1_loss(current_Q_values, target_Q_values)
             # backward & update
             optimizer.zero_grad()
-            current_Q_values.backward(d_error.data.unsqueeze(1))
+            # current_Q_values.backward(d_error.data)#.unsqueeze(1))
+            loss.backward()
+            # Clip the gradients to lie between -1 and +1
+            for params in Q.parameters():
+                params.grad.data.clamp_(-1, 1)
             
             optimizer.step()
             num_param_updates += 1
@@ -311,6 +318,8 @@ def mario_learning(
             # 要 * -1 才是正確的gradient，why?
             d_error = clipped_bellman_error * -1.0
             
+            print(d_error)
+
             # backward & update
             optimizer.zero_grad()
             current_Q_values.backward(d_error.data.unsqueeze(1))
