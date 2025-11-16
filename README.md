@@ -1,6 +1,6 @@
 # DQN
 
-[中文說明 README_zh.md](README_zh.md)
+[English](README.md) | [中文](README_zh.md)
 
 An implementation of the DQN algorithm in PyTorch, trained on Super Mario Bros and Atari Pong. The overall architecture is inspired by openai/baselines.
 

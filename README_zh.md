@@ -1,6 +1,6 @@
 # DQN
 
-[English Version](README.md)
+[English](README.md) | [中文](README_zh.md)
 
 使用PyTorch實作DQN演算法，並訓練super-mario-bros以及atari-pong，整體架構參考openai/baselines。  
 
